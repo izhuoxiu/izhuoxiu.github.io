@@ -1,1 +1,3 @@
-
+User-agent: *
+Allow: /
+Sitemap: https://izhuoxiu.github.io/sitemap.xml
