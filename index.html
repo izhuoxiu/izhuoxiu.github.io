@@ -2,9 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 手机自适应核心标签 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- 防重复收录权威链接 -->
     <link rel="canonical" href="https://izhuoxiu.com/">
 
     <meta name="description" content="MFS（Multimodal Feedback Schema）多模态反馈开源白皮书，新一代触觉+声光交互协议，兼容HES格式，提供跨平台SDK与交互脚本规范。">
@@ -19,50 +17,178 @@
             padding: 0;
             box-sizing: border-box;
         }
+        
+        /* 科技感暗色背景与网格底纹 */
         body {
             height: 100vh;
-            background-color: #0b101c;
+            background: radial-gradient(circle at center, #0f1932 0%, #070a14 100%);
             color: #e4edf9;
-            font-family: "Microsoft Yahei",sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 0 20px;
+            overflow: hidden;
+            perspective: 1000px; /* 增加3D透视感 */
         }
-        .main-text {
-            /* PC端大字 */
-            font-size: clamp(32px,6vw,52px);
-            font-weight: 600;
+
+        /* 赛博朋克科幻网格底纹 */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background-image: 
+                linear-gradient(rgba(0, 184, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 184, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: rotateX(60deg);
+            z-index: 1;
+            opacity: 0.7;
+        }
+
+        /* 核心容器 */
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 文字外层：负责最后的空间震荡抖动 (模拟MFS触觉反馈) */
+        .text-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            animation: mfsShockwave 0.4s ease-out 2.3s forwards;
+        }
+
+        /* 逐字控制 */
+        .char {
+            display: inline-block;
+            font-size: clamp(32px, 6vw, 56px);
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.3);
+            opacity: 0;
+            transform: scale(0.3) rotateY(90deg);
+            /* 一体化复杂动画：显现->单字翻转->最后归位 */
+            animation: 
+                charAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+                charRotate 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1.2s forwards;
+        }
+
+        /* 逐字出现的延迟动画延迟配置 (从左到右) */
+        .char:nth-child(1) { animation-delay: 0.1s, 1.2s; }
+        .char:nth-child(2) { animation-delay: 0.2s, 1.22s; }
+        .char:nth-child(3) { animation-delay: 0.3s, 1.24s; }
+        .char:nth-child(4) { animation-delay: 0.4s, 1.26s; }
+        .char:nth-child(5) { animation-delay: 0.5s, 1.28s; }
+        .char:nth-child(6) { animation-delay: 0.6s, 1.3s; }
+        .char:nth-child(7) { animation-delay: 0.7s, 1.32s; }
+        .char:nth-child(8) { animation-delay: 0.8s, 1.34s; }
+        .char:nth-child(9) { animation-delay: 0.9s, 1.36s; }
+        .char:nth-child(10) { animation-delay: 1.0s, 1.38s; }
+
+        /* 倒计时文本与雷达扫描线外观 */
+        .timer-text {
+            font-size: clamp(14px, 2.5vw, 18px);
+            color: #799bbb;
+            font-family: "Courier New", Courier, monospace;
             letter-spacing: 2px;
-            text-align: center;
-            margin-bottom: 30px;
-            animation: lightPulse 2.2s infinite ease-in-out;
-            white-space: nowrap;
+            background: rgba(13, 27, 54, 0.6);
+            padding: 8px 24px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        @keyframes lightPulse {
+
+        #countNum {
+            color: #ff3b30;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-shadow: 0 0 8px rgba(255, 59, 48, 0.6);
+        }
+
+        /* 核心动画 1：从左到右逐字显现并弹入 */
+        @keyframes charAppear {
             0% {
-                text-shadow: 0 0 5px #33b8ff, 0 0 10px #1566aa;
-                opacity: 0.92;
-            }
-            50% {
-                text-shadow: 0 0 12px #33b8ff, 0 0 26px #1566aa;
-                opacity: 1;
+                opacity: 0;
+                transform: scale(0.3) rotateY(90deg);
+                filter: blur(10px);
             }
             100% {
-                text-shadow: 0 0 5px #33b8ff, 0 0 10px #1566aa;
-                opacity: 0.92;
+                opacity: 1;
+                transform: scale(1) rotateY(0deg);
+                filter: blur(0);
+                color: #ffffff;
             }
         }
-        .timer-text {
-            font-size: clamp(18px,3vw,26px);
-            color: #87a6cc;
+
+        /* 核心动画 2：文字整体旋转幻化 */
+        @keyframes charRotate {
+            0% {
+                transform: rotateX(0deg) scale(1);
+            }
+            50% {
+                transform: rotateX(180deg) scale(0.8);
+                color: #ff007f; /* 中间穿插高饱和度极光色 */
+                text-shadow: 0 0 15px #ff007f;
+            }
+            100% {
+                transform: rotateX(360deg) scale(1);
+                color: #00f0ff;
+                text-shadow: 0 0 12px rgba(0, 240, 255, 0.8), 0 0 25px rgba(0, 240, 255, 0.4);
+            }
+        }
+
+        /* 核心动画 3：模拟 MFS 多模态震动协议的“触觉抖动”与“光效排开” */
+        @keyframes mfsShockwave {
+            0% { transform: scale(1); }
+            20% { transform: scale(0.92) translateY(-4px); filter: brightness(1.5); }
+            40% { transform: scale(1.05) translateY(3px); }
+            60% { transform: scale(0.98) translateX(-2px); }
+            80% { transform: scale(1.02) translateX(2px); }
+            100% { 
+                transform: scale(1); 
+                /* 最终定格：更宽、更具有张力的字间距，一字排开 */
+                letter-spacing: 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="main-text">未来可及，MFS正发生</div>
-    <div class="timer-text">即将进入文档主页，倒计时：<span id="countNum">3</span> s</div>
+
+    <div class="container">
+        <div class="text-wrapper">
+            <span class="char">未</span>
+            <span class="char">来</span>
+            <span class="char">可</span>
+            <span class="char">及</span>
+            <span class="char">，</span>
+            <span class="char">M</span>
+            <span class="char">F</span>
+            <span class="char">S</span>
+            <span class="char">正</span>
+            <span class="char">发</span>
+            <span class="char">生</span>
+        </div>
+
+        <div class="timer-text">
+            <span>SYS_INITIALIZING...</span>
+            <span>[ <span id="countNum">3</span>s ]</span>
+        </div>
+    </div>
 
     <script>
         const targetUrl = "https://izhuoxiu.com/MFS/";
