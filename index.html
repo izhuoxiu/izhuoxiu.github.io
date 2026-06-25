@@ -2,18 +2,17 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 防重复收录：把自定义域名设置为权威主链接，github.io镜像不会被搜索引擎判定为重复内容 -->
+    <!-- 手机自适应核心标签 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 防重复收录权威链接 -->
     <link rel="canonical" href="https://izhuoxiu.com/">
 
-    <!-- SEO 核心信息，方便搜索引擎与AI抓取 -->
     <meta name="description" content="MFS（Multimodal Feedback Schema）多模态反馈开源白皮书，新一代触觉+声光交互协议，兼容HES格式，提供跨平台SDK与交互脚本规范。">
     <meta name="keywords" content="MFS,Multimodal Feedback Schema,触觉反馈,交互协议,开源白皮书,HES升级,震动灯带闪光灯联动">
     <meta name="robots" content="index,follow">
 
     <title>MFS 多模态反馈规范 | 开源技术白皮书</title>
     <base href="/">
-
     <style>
         * {
             margin: 0;
@@ -29,13 +28,17 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 0 20px;
         }
         .main-text {
-            font-size: 42px;
+            /* PC端大字 */
+            font-size: clamp(32px,6vw,52px);
             font-weight: 600;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
+            text-align: center;
             margin-bottom: 30px;
             animation: lightPulse 2.2s infinite ease-in-out;
+            white-space: nowrap;
         }
         @keyframes lightPulse {
             0% {
@@ -52,7 +55,7 @@
             }
         }
         .timer-text {
-            font-size: 24px;
+            font-size: clamp(18px,3vw,26px);
             color: #87a6cc;
         }
     </style>
@@ -62,7 +65,6 @@
     <div class="timer-text">即将进入文档主页，倒计时：<span id="countNum">3</span> s</div>
 
     <script>
-        // 目标统一使用自定义域名，彻底避免双域名跳转混乱
         const targetUrl = "https://izhuoxiu.com/MFS/";
         let num = 3;
         const dom = document.getElementById("countNum");
@@ -76,7 +78,6 @@
             }
         }, 1000);
 
-        // 兜底跳转，保证兼容性
         setTimeout(() => {
             window.location.href = targetUrl;
         }, 3000);
