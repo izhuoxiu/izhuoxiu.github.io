@@ -2,12 +2,84 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>MFS 多模态反馈规范</title>
-    <!-- 核心配置：根路径，保证所有资源不404 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 防重复收录：把自定义域名设置为权威主链接，github.io镜像不会被搜索引擎判定为重复内容 -->
+    <link rel="canonical" href="https://izhuoxiu.com/">
+
+    <!-- SEO 核心信息，方便搜索引擎与AI抓取 -->
+    <meta name="description" content="MFS（Multimodal Feedback Schema）多模态反馈开源白皮书，新一代触觉+声光交互协议，兼容HES格式，提供跨平台SDK与交互脚本规范。">
+    <meta name="keywords" content="MFS,Multimodal Feedback Schema,触觉反馈,交互协议,开源白皮书,HES升级,震动灯带闪光灯联动">
+    <meta name="robots" content="index,follow">
+
+    <title>MFS 多模态反馈规范 | 开源技术白皮书</title>
     <base href="/">
-    <meta http-equiv="refresh" content="0;url=https://izhuoxiu.github.io/MFS/">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            height: 100vh;
+            background-color: #0b101c;
+            color: #e4edf9;
+            font-family: "Microsoft Yahei",sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-text {
+            font-size: 42px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            animation: lightPulse 2.2s infinite ease-in-out;
+        }
+        @keyframes lightPulse {
+            0% {
+                text-shadow: 0 0 5px #33b8ff, 0 0 10px #1566aa;
+                opacity: 0.92;
+            }
+            50% {
+                text-shadow: 0 0 12px #33b8ff, 0 0 26px #1566aa;
+                opacity: 1;
+            }
+            100% {
+                text-shadow: 0 0 5px #33b8ff, 0 0 10px #1566aa;
+                opacity: 0.92;
+            }
+        }
+        .timer-text {
+            font-size: 24px;
+            color: #87a6cc;
+        }
+    </style>
 </head>
 <body>
-    <p>未来可及，MFS此刻正发生...</p>
+    <div class="main-text">未来可及，MFS正发生</div>
+    <div class="timer-text">即将进入文档主页，倒计时：<span id="countNum">3</span> s</div>
+
+    <script>
+        // 目标统一使用自定义域名，彻底避免双域名跳转混乱
+        const targetUrl = "https://izhuoxiu.com/MFS/";
+        let num = 3;
+        const dom = document.getElementById("countNum");
+
+        const timer = setInterval(() => {
+            num--;
+            dom.innerText = num;
+            if(num <= 0) {
+                clearInterval(timer);
+                location.href = targetUrl;
+            }
+        }, 1000);
+
+        // 兜底跳转，保证兼容性
+        setTimeout(() => {
+            window.location.href = targetUrl;
+        }, 3000);
+    </script>
 </body>
 </html>
