@@ -29,7 +29,9 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            perspective: 1000px; /* 增加3D透视感 */
+            perspective: 1000px;
+            /* 低端设备优化动画性能 */
+            will-change: transform;
         }
 
         /* 赛博朋克科幻网格底纹 */
@@ -47,6 +49,7 @@
             transform: rotateX(60deg);
             z-index: 1;
             opacity: 0.7;
+            pointer-events: none;
         }
 
         /* 核心容器 */
@@ -59,7 +62,7 @@
             justify-content: center;
         }
 
-        /* 文字外层：负责最后的空间震荡抖动 (模拟MFS触觉反馈) */
+        /* 文字外层：MFS冲击波震动动画 */
         .text-wrapper {
             display: flex;
             justify-content: center;
@@ -68,7 +71,7 @@
             animation: mfsShockwave 0.4s ease-out 2.3s forwards;
         }
 
-        /* 逐字控制 */
+        /* 逐字通用样式 */
         .char {
             display: inline-block;
             font-size: clamp(32px, 6vw, 56px);
@@ -78,25 +81,32 @@
             text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.3);
             opacity: 0;
             transform: scale(0.3) rotateY(90deg);
-            /* 一体化复杂动画：显现->单字翻转->最后归位 */
+            /* 双动画：出场 + 翻转变色 */
             animation: 
                 charAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
                 charRotate 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1.2s forwards;
+            will-change: transform, opacity, color;
+        }
+        /* 逗号特殊配色区分 */
+        .char.comma {
+            color: #ff66bb;
+            text-shadow: 0 0 10px rgba(255, 102, 187, 0.5);
         }
 
-        /* 逐字出现的延迟动画延迟配置 (从左到右) */
-        .char:nth-child(1) { animation-delay: 0.1s, 1.2s; }
-        .char:nth-child(2) { animation-delay: 0.2s, 1.22s; }
-        .char:nth-child(3) { animation-delay: 0.3s, 1.24s; }
-        .char:nth-child(4) { animation-delay: 0.4s, 1.26s; }
-        .char:nth-child(5) { animation-delay: 0.5s, 1.28s; }
-        .char:nth-child(6) { animation-delay: 0.6s, 1.3s; }
-        .char:nth-child(7) { animation-delay: 0.7s, 1.32s; }
-        .char:nth-child(8) { animation-delay: 0.8s, 1.34s; }
-        .char:nth-child(9) { animation-delay: 0.9s, 1.36s; }
+        /* 补全11个字符动画延迟 */
+        .char:nth-child(1)  { animation-delay: 0.1s, 1.2s; }
+        .char:nth-child(2)  { animation-delay: 0.2s, 1.22s; }
+        .char:nth-child(3)  { animation-delay: 0.3s, 1.24s; }
+        .char:nth-child(4)  { animation-delay: 0.4s, 1.26s; }
+        .char:nth-child(5)  { animation-delay: 0.5s, 1.28s; }
+        .char:nth-child(6)  { animation-delay: 0.6s, 1.30s; }
+        .char:nth-child(7)  { animation-delay: 0.7s, 1.32s; }
+        .char:nth-child(8)  { animation-delay: 0.8s, 1.34s; }
+        .char:nth-child(9)  { animation-delay: 0.9s, 1.36s; }
         .char:nth-child(10) { animation-delay: 1.0s, 1.38s; }
+        .char:nth-child(11) { animation-delay: 1.1s, 1.40s; }
 
-        /* 倒计时文本与雷达扫描线外观 */
+        /* 倒计时终端栏 */
         .timer-text {
             font-size: clamp(14px, 2.5vw, 18px);
             color: #799bbb;
@@ -112,7 +122,6 @@
             align-items: center;
             gap: 10px;
         }
-
         #countNum {
             color: #ff3b30;
             font-weight: bold;
@@ -120,7 +129,7 @@
             text-shadow: 0 0 8px rgba(255, 59, 48, 0.6);
         }
 
-        /* 核心动画 1：从左到右逐字显现并弹入 */
+        /* 动画1：逐字淡入弹开 */
         @keyframes charAppear {
             0% {
                 opacity: 0;
@@ -135,14 +144,14 @@
             }
         }
 
-        /* 核心动画 2：文字整体旋转幻化 */
+        /* 动画2：3D翻转极光变色 */
         @keyframes charRotate {
             0% {
                 transform: rotateX(0deg) scale(1);
             }
             50% {
                 transform: rotateX(180deg) scale(0.8);
-                color: #ff007f; /* 中间穿插高饱和度极光色 */
+                color: #ff007f;
                 text-shadow: 0 0 15px #ff007f;
             }
             100% {
@@ -152,30 +161,28 @@
             }
         }
 
-        /* 核心动画 3：模拟 MFS 多模态震动协议的“触觉抖动”与“光效排开” */
+        /* 动画3：整体震动冲击波，对应M触觉反馈 */
         @keyframes mfsShockwave {
             0% { transform: scale(1); }
             20% { transform: scale(0.92) translateY(-4px); filter: brightness(1.5); }
             40% { transform: scale(1.05) translateY(3px); }
             60% { transform: scale(0.98) translateX(-2px); }
             80% { transform: scale(1.02) translateX(2px); }
-            100% { 
+            100 { 
                 transform: scale(1); 
-                /* 最终定格：更宽、更具有张力的字间距，一字排开 */
                 letter-spacing: 8px;
             }
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="text-wrapper">
             <span class="char">未</span>
             <span class="char">来</span>
             <span class="char">可</span>
             <span class="char">及</span>
-            <span class="char">，</span>
+            <span class="char comma">，</span>
             <span class="char">M</span>
             <span class="char">F</span>
             <span class="char">S</span>
@@ -185,28 +192,28 @@
         </div>
 
         <div class="timer-text">
-            <span>SYS_INITIALIZING...</span>
-            <span>[ <span id="countNum">3</span>s ]</span>
+            <span>SYS_INITIALIZING... 正在载入MFS文档主页</span>
+            <span>[ <span id="countNum">3</span>s 自动跳转 ]</span>
         </div>
     </div>
 
     <script>
-        const targetUrl = "https://izhuoxiu.com/MFS/";
-        let num = 3;
-        const dom = document.getElementById("countNum");
+        // 统一配置跳转地址，方便本地调试修改
+        const DOC_PAGE = "https://izhuoxiu.com/MFS/";
+        let countdown = 3;
+        const countDom = document.getElementById("countNum");
 
         const timer = setInterval(() => {
-            num--;
-            dom.innerText = num;
-            if(num <= 0) {
+            countdown--;
+            countDom.textContent = countdown;
+            if (countdown <= 0) {
                 clearInterval(timer);
-                location.href = targetUrl;
+                location.assign(DOC_PAGE);
             }
         }, 1000);
 
-        setTimeout(() => {
-            window.location.href = targetUrl;
-        }, 3000);
+        // 兜底跳转，防止定时器异常
+        setTimeout(() => location.assign(DOC_PAGE), 3000);
     </script>
 </body>
 </html>
